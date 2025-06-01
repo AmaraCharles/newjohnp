@@ -501,21 +501,21 @@ async function convertETHtoUSDT(amountInETH) {
     try {
         const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usdt");
         const data = await response.json();
+        console.log("API response:", data);
 
-        if (data.ethereum && data.ethereum.usdt) {
-            const rate = data.ethereum.usdt;
+        const rate = data.ethereum.usdt;
+
+        if (rate) {
             const converted = rate * amountInETH;
             console.log(`${amountInETH} ETH is approximately ${converted.toFixed(2)} USDT`);
             localStorage.setItem("ethToUsdt", converted.toFixed(2));
         } else {
-            console.error("Error fetching ETH to USDT rate.");
+            console.error("USDT rate not found. Full data:", data);
         }
     } catch (error) {
         console.error("An error occurred while converting ETH to USDT:", error);
     }
 }
-
-;
 
 
 
@@ -523,6 +523,7 @@ async function convertETHtoUSDT(amountInETH) {
 
 
         await fetchETHPrice()
+        
          const ethDollar=localStorage.getItem("ethDollar")
 ;
 
@@ -536,17 +537,21 @@ console.log(artistData);
 
 localStorage.setItem("artistData",JSON.stringify(artistData))
   var ethprice=Number(artistData.balance)/Number(ethDollar)
+  await convertETHtoUSDT(artistData.balance)
         // Populate profile information
         // document.querySelector('#totalArt').textContent = `${artistData.artWorks.length}`;
         // document.querySelector('#balance').textContent = `${artistData.balance} ETH`;
-        var usdteqv=convertETHtoUSDT(artistData.balance)
+        var usdteqv=localStorage.getItem("ethToUsdt")
         document.querySelector('#fundedBalance').textContent = `${artistData.balance}`;
   document.querySelector('#fundedBalanceUSDT').textContent =usdteqv;
 
 
-         document.querySelector('#fundedBalanceUSDT').textContent = ethprice.toFixed(6);
+        //  document.querySelector('#fundedBalanceUSDT').textContent = ethprice.toFixed(6);
+        var usdttoeth=Number(artistData.profit)/Number(ethDollar)
        
-        //  document.querySelector('#fundedBalance2').textContent = `$${artistData.balance}`;
+         document.querySelector('#fundedBalance2').textContent = usdttoeth;
+         document.querySelector('#fundedBalanceUSDT2').textContent =artistData.profit ;
+         
        
         document.querySelector('#spotBalance').textContent = `${artistData.profit} `;
        
@@ -1163,7 +1168,7 @@ window.switchTab = function (tabName) {
                                 <p style="margin-left: 5px;font-size: 17px;">(<span class="" data-eth="0.0000" id="fundedBalanceUSDT">$0.00</span> USDT)</p>
                             </div>
                             <div class="mb-20 d-flex" style="align-items: baseline;">
-                                <img style="width: 20px;" class=" lazyloaded" data-src=../static/web/images/category/weth.webp" alt="" src="./dashboard_files/weth.webp">
+                                <img style="width: 20px;" class=" lazyloaded" data-src="../static/web/images/category/weth.webp" alt="" src="./dashboard_files/weth.webp">
                                 <h2 style="margin-right: 5px;margin-left:10px;font-weight: 600" id="fundedBalance2">0.0000  </h2><small><b>wETH</b></small>
                                 <p style="margin-left: 5px;font-size: 17px;">(<span class="toUsdt" data-eth="0.0000" id="fundedBalanceUSDT2">$0.00</span> USDT)</p>
                             </div>
