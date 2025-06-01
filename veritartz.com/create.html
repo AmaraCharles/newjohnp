@@ -393,12 +393,12 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
             </svg>
         </a>
         
-        <script>
+        <!-- <script>
             var avatarowner=JSON.parse(localStorage.getItem("user"))
             var userbanner=document.getElementById("user-banner")
             userbanner.src=avatarowner.creatorAvatar
 
-        </script>
+        </script> -->
         
         <a data-bs-target="#menu-modal" data-bs-toggle="modal">
             <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -779,17 +779,17 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
       var balance=parsename.balance
       var mintFee=0.2
 
-       if (balance <mintFee){   
+//        if (balance <mintFee){   
 
- swal({
-                                     title: "Insufficient balance",
-                                     text: "You do not have enough balance for ths operation.Please top up.",
-                                     type:"error",
-                                     timer:3000,
-                                    })
+//  swal({
+//                                      title: "Insufficient balance",
+//                                      text: "You do not have enough balance for ths operation.Please top up.",
+//                                      type:"error",
+//                                      timer:3000,
+//                                     })
 
-       }
-       else{
+//        }
+//        else{
         console.log("vbe passed");
         
 $('.btn').html("Minting...")
@@ -811,7 +811,7 @@ $('.btn').html("Minting...")
                         
      
           
-        })
+        )
       
       
       

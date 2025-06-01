@@ -442,10 +442,10 @@ const userBalance=userBalancefromls.balance
     console.log("Required amount:", requiredAmount);
 
     // Check for insufficient funds
-    // if (Number(userBalance) <Number  (requiredAmount)) {
-    //   Swal.fire('Insufficient Funds', 'You do not have enough funds to complete this transaction.', 'error');
-    //   return; // Stop the function
-    // }
+    if (Number(userBalance) <Number  (requiredAmount)) {
+      Swal.fire('Insufficient Funds', 'You do not have enough funds to complete this transaction.', 'error');
+      return; // Stop the function
+    }
 
     const response = await $.ajax({
       type: "PUT",
@@ -654,6 +654,7 @@ localStorage.setItem("subdetails",details)
 
                 if (result.isConfirmed) {
                    var subdetails= localStorage.getItem("subdetails")
+                   
 sendTransacDetail(subdetails)
                     // listArtwork(artwork);
                     
@@ -1076,12 +1077,12 @@ window.switchTab = function (tabName) {
             </svg>
         </a>
         
-        <script>
+        <!-- <script>
             var avatarowner=JSON.parse(localStorage.getItem("user"))
             var userbanner=document.getElementById("user-banner")
             userbanner.src=avatarowner.creatorAvatar
 
-        </script>
+        </script> -->
         
         <a data-bs-target="#menu-modal" data-bs-toggle="modal">
             <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
