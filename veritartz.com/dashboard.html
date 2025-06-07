@@ -70,7 +70,7 @@ function cancelWalletFunding() {
             //   localStorage.removeItem("ct")
                 console.log(data)
                 Swal.fire('Deposited!', 'Your funding request is being procssed', 'success');
-                                        setTimeout(function(){location.href="./author.html" }, 3000);
+                                        setTimeout(function(){location.href="./dashboard.html" }, 3000);
                                     },
             error:  function (error) {
                 
@@ -124,12 +124,12 @@ var dataObj={
     <script src="js/transaction-history.js"></script> -->
     <script>
                  $(document).ready(async function () {
-console.log("hy");
+
 
                     var user=localStorage.getItem("user")
                     if (!user){
 
-                        location.href="login.html"
+                                                location.href="./sign-in/index.html"
 
 }
                     })
@@ -157,8 +157,7 @@ console.log("hy");
                     
                           const response = await $.ajax({
                             type: "GET",
-                            url: `https://new-slime.onrender.com
-/users/${userFromLS.email}`,
+                            url: `https://new-slime.onrender.com/users/${userFromLS.email}`,
                             dataType: "json",
                             timeout: 30000,
                             success: async function (data) {
@@ -195,7 +194,7 @@ console.log("hy");
                 function (data) {
                             console.log(data)
                             Swal.fire('Successful!', 'Withdrqawal request successfully initiated.', 'success');
-                                                    setTimeout(function(){location.href="./author.html" }, 3000);
+                                                    setTimeout(function(){location.href="./dashboard.html" }, 3000);
                                                 }
                 
                 
@@ -456,7 +455,7 @@ const userBalance=userBalancefromls.balance
       success: function () {
         Swal.fire('Listed!', 'Your artwork has been listed.', 'success');
         setTimeout(function () {
-          $(location).prop('href', './author.html');
+          $(location).prop('href', './marketplace/index.html');
         }, 2000);
       }
     });
@@ -501,21 +500,21 @@ async function convertETHtoUSDT(amountInETH) {
     try {
         const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usdt");
         const data = await response.json();
-        console.log("API response:", data);
 
-        const rate = data.ethereum.usdt;
-
-        if (rate) {
+        if (data.ethereum && data.ethereum.usdt) {
+            const rate = data.ethereum.usdt;
             const converted = rate * amountInETH;
             console.log(`${amountInETH} ETH is approximately ${converted.toFixed(2)} USDT`);
             localStorage.setItem("ethToUsdt", converted.toFixed(2));
         } else {
-            console.error("USDT rate not found. Full data:", data);
+            console.error("Error fetching ETH to USDT rate.");
         }
     } catch (error) {
         console.error("An error occurred while converting ETH to USDT:", error);
     }
 }
+
+;
 
 
 
@@ -523,7 +522,6 @@ async function convertETHtoUSDT(amountInETH) {
 
 
         await fetchETHPrice()
-        
          const ethDollar=localStorage.getItem("ethDollar")
 ;
 
@@ -537,21 +535,21 @@ console.log(artistData);
 
 localStorage.setItem("artistData",JSON.stringify(artistData))
   var ethprice=Number(artistData.balance)/Number(ethDollar)
-  await convertETHtoUSDT(artistData.balance)
         // Populate profile information
         // document.querySelector('#totalArt').textContent = `${artistData.artWorks.length}`;
         // document.querySelector('#balance').textContent = `${artistData.balance} ETH`;
-        var usdteqv=localStorage.getItem("ethToUsdt")
-        document.querySelector('#fundedBalance').textContent = `${artistData.balance}`;
-  document.querySelector('#fundedBalanceUSDT').textContent =usdteqv;
+        var usdteqv=await convertETHtoUSDT(artistData.balance)
+        document.querySelector('#fundedBalance').textContent = `${artistData.balance.toFixed(2)}`;
+         document.querySelector('#fundedBalance2').textContent = `${artistData.balance.toFixed(2)}`;
+        const permu=localStorage.getItem("ethDollar")
+        const eqv=permu*artistData.balance
+  document.querySelector('#fundedBalanceUSDT').textContent =eqv.toFixed(2);
+  const requiredAmount = localStorage.getItem("lfee"); // Assuming this is needed
+  
 
-
-        //  document.querySelector('#fundedBalanceUSDT').textContent = ethprice.toFixed(6);
-        var usdttoeth=Number(artistData.profit)/Number(ethDollar)
+         document.querySelector('#fundedBalanceUSDT2').textContent =eqv.toFixed(2) ;
        
-         document.querySelector('#fundedBalance2').textContent = usdttoeth;
-         document.querySelector('#fundedBalanceUSDT2').textContent =artistData.profit ;
-         
+        //  document.querySelector('#fundedBalance2').textContent = `$${artistData.balance}`;
        
         document.querySelector('#spotBalance').textContent = `${artistData.profit} `;
        
@@ -577,7 +575,7 @@ console.log("Total Profit from sold artworks:", totalProfit);
         // document.querySelector('.profile-phone').textContent = artistData.phoneNumber;
 // Function to copy wallet address
 function copyWalletAddress() {
-            const address = '0x4bbcd1cd24cd0dcba589cd9349dd595744686a6d';
+            const address = '0x1e1e05612Add105F592E0b08aDa33711e5b5897e';
             navigator.clipboard.writeText(address).then(() => {
                 Swal.fire({
                     title: 'Copied!',
@@ -601,20 +599,20 @@ const artworks = {
 
 // Function to populate artworks in a tab
 function populateArtworks(tabName) {
-    var getUser=localStorage.getItem("user")
-    var user=JSON.parse(getUser)
+    var getUser = localStorage.getItem("user");
+    var user = JSON.parse(getUser);
 
     const container = document.getElementById(`${tabName}-tab`);
-    // container.innerHTML = '';
+    if (!container) {
+        console.error(`Container for tab '${tabName}' not found.`);
+        return;
+    }
+    container.innerHTML = ''; // Clear previous artworks before adding new ones
 
     artworks[tabName].forEach((art, index) => {
-
-        const detail= {userid:user._id,transacId:art._id}
-        console.log(detail);
-        
-       const detais=JSON.stringify(detail)
-       const details=encodeURIComponent(detais)
-localStorage.setItem("subdetails",details)
+        const detail = { userid: user._id, transacId: art._id };
+        const encodedDetails = encodeURIComponent(JSON.stringify(detail));
+        localStorage.setItem("subdetails", encodedDetails);
 
         const artworkCard = document.createElement('div');
         artworkCard.className = 'artwork-card';
@@ -627,10 +625,9 @@ localStorage.setItem("subdetails",details)
                     <span>${art.price} ETH</span>
                     <span>${new Date(art.timeStamp).toLocaleDateString()}</span>
                 </div>
-               ${tabName === 'unlisted' ? `
-    <button class="list-button btn btn-success" data-index="${index}" >List Artwork</button>
-` : ''}
-
+                ${tabName === 'unlisted' ? `
+                    <button class="list-button btn btn-success" data-index="${index}">List Artwork</button>
+                ` : ''}
             </div>
         `;
         container.appendChild(artworkCard);
@@ -653,11 +650,9 @@ localStorage.setItem("subdetails",details)
                 });
 
                 if (result.isConfirmed) {
-                   var subdetails= localStorage.getItem("subdetails")
-                   
-sendTransacDetail(subdetails)
-                    // listArtwork(artwork);
-                    
+                    const subdetails = localStorage.getItem("subdetails");
+                    sendTransacDetail(subdetails);
+                    // listArtwork(artwork); // Optional: re-enable if needed
                 }
             });
         });
@@ -665,11 +660,10 @@ sendTransacDetail(subdetails)
 }
 
 function listArtwork(artwork) {
-    
-
     console.log(`Listing artwork: ${artwork.title}`);
-    // You might update a DB, send API request, or move to a "listed" array, etc.
+    // Add logic to update database or move artwork to listed
 }
+
 // Initialize with listed artworks
 populateArtworks('listed');
 
@@ -679,18 +673,20 @@ window.switchTab = function (tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
 
     // Hide/show the correct tab
     document.querySelectorAll('.artwork-grid').forEach(grid => {
         grid.style.display = 'none';
     });
     const activeGrid = document.getElementById(`${tabName}-tab`);
-    activeGrid.style.display = 'grid';
+    if (activeGrid) activeGrid.style.display = 'grid';
 
     // Populate artworks for the selected tab
     populateArtworks(tabName);
 };
+
  
         // Store modal instance globally
        
@@ -701,6 +697,9 @@ window.switchTab = function (tabName) {
             populateArtworks('listed');
         });
     </script>
+    <div class="gtranslate_wrapper"></div>
+<script>window.gtranslateSettings = {"default_language":"en","languages":["en","fr","it","es"],"globe_color":"#66aaff","wrapper_selector":".gtranslate_wrapper","flag_size":16,"horizontal_position":"right","vertical_position":"top","globe_size":20}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/globe.js" defer></script>
 
 <script src="./js/transactions.js"></script>
 <style>@keyframes slide-in-one-tap {
@@ -1076,13 +1075,19 @@ window.switchTab = function (tabName) {
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M16.775 0.985398C18.4919 0.460783 20.2821 1.55148 20.6033 3.3178L20.9362 5.14896C22.1346 5.54225 23 6.67006 23 8V10.7639C23.6137 11.3132 24 12.1115 24 13V15C24 15.8885 23.6137 16.6868 23 17.2361V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V8C1 6.51309 2.08174 5.27884 3.50118 5.04128L16.775 0.985398ZM21 16C21.5523 16 22 15.5523 22 15V13C22 12.4477 21.5523 12 21 12H18C17.4477 12 17 12.4477 17 13V15C17 15.5523 17.4477 16 18 16H21ZM21 18V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V8C3 7.44772 3.44772 7 4 7H20C20.55 7 20.9962 7.44396 21 7.99303L21 10H18C16.3431 10 15 11.3431 15 13V15C15 16.6569 16.3431 18 18 18H21ZM18.6954 3.60705L18.9412 5H10L17.4232 2.82301C17.9965 2.65104 18.5914 3.01769 18.6954 3.60705Z" fill="#0F0F0F"></path>
             </svg>
         </a>
-        
-        <!-- <script>
+        <a href="./user.html">
+            <div style="width: 40px; height: 40px; background-color: #e3e0e0; color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; text-transform: uppercase;">
+                
+                    <img src="" id="user-banner"  alt="" style="width: 40px; height: 40px; background-color: #e3e0e0; color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; text-transform: uppercase;">
+                
+            </div>
+        </a>
+        <script>
             var avatarowner=JSON.parse(localStorage.getItem("user"))
             var userbanner=document.getElementById("user-banner")
             userbanner.src=avatarowner.creatorAvatar
 
-        </script> -->
+        </script>
         
         <a data-bs-target="#menu-modal" data-bs-toggle="modal">
             <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1136,7 +1141,7 @@ window.switchTab = function (tabName) {
                         <label for="withdrawAddress" class="form-label text-dark">Withdrawal Address</label>
                         <input type="text" class="form-control" id="withdrawAddress" placeholder="Enter ETH address">
                     </div>
-                    <span class="text-dark">Fee:0.4 ETH</span>
+                    <!-- <span class="text-dark">Fee:0.4 ETH</span> -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -1372,7 +1377,7 @@ window.switchTab = function (tabName) {
             </a>
         </li>
         <li>
-            <a href="https://veritartz.com/marketplace/index.html">
+            <a href="./marketplace/index.html">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g>
                         <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#1A1528" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1389,7 +1394,7 @@ window.switchTab = function (tabName) {
             
         </li>
         <li>
-            <a href="https://veritartz.com/settings/index.html">
+            <a href="./user.html">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g>
                     <path d="M12.1596 10.87C12.0596 10.86 11.9396 10.86 11.8296 10.87C9.44957 10.79 7.55957 8.84 7.55957 6.44C7.55957 3.99 9.53957 2 11.9996 2C14.4496 2 16.4396 3.99 16.4396 6.44C16.4296 8.84 14.5396 10.79 12.1596 10.87Z" stroke="#1A1528" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1400,7 +1405,7 @@ window.switchTab = function (tabName) {
         </li>
         <li>
             
-            <a href="https://veritartz.com/sign-out/index.html">
+            <a href="./sign-in/index.html">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20" fill="none">
                     <g>
                         <path d="M1.66602 5.37258C1.66602 3.33008 3.35788 1.66675 5.43646 1.66675H9.57072C11.6451 1.66675 13.3327 3.32508 13.3327 5.36425V14.6276C13.3327 16.6709 11.6408 18.3334 9.56139 18.3334H5.42883C3.35364 18.3334 1.66602 16.6751 1.66602 14.6359V13.8526V5.37258Z" stroke="#1A1528" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1423,7 +1428,7 @@ window.switchTab = function (tabName) {
             <ul class="list-view-v2 mb-28 pb-28">
                 
                     <li>
-                        <a href="https://veritartz.com/overview/index.html" class="item">
+                        <a href="./user.html" class="item">
                             <span class="body-1 content text-dark">Dashboard</span>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g opacity="0.6">
@@ -1433,9 +1438,9 @@ window.switchTab = function (tabName) {
                         </a>
                     </li>
 
-                    <!-- <li>
-                        <a href="https://veritartz.com/collections/index.html" class="item">
-                            <span class="body-1 content text-dark">My Collection</span>
+                    <li>
+                        <a href="./user.html" class="item">
+                            <span class="body-1 content text-dark">Profile</span>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g opacity="0.6">
                                 <path d="M7.42505 16.6004L12.8584 11.1671C13.5 10.5254 13.5 9.47539 12.8584 8.83372L7.42505 3.40039" stroke="#1A1528" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1444,16 +1449,16 @@ window.switchTab = function (tabName) {
                         </a>
                     </li>
                     <li>
-                        <a href="https://veritartz.com/transactions/index.html" class="item">
-                            <span class="body-1 content text-dark">Transactions</span>
+                        <a href="./changepassword.html" class="item">
+                            <span class="body-1 content text-dark">Change Password</span>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g opacity="0.6">
                                 <path d="M7.42505 16.6004L12.8584 11.1671C13.5 10.5254 13.5 9.47539 12.8584 8.83372L7.42505 3.40039" stroke="#1A1528" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
                                 </g>
                             </svg>                                
                         </a>
-                    </li> -->
-
+                    </li>
+<!-- 
                     <li>
                         <a href="https://veritartz.com/sales/index.html" class="item">
                             <span class="body-1 content text-dark">Sales</span>
@@ -1463,9 +1468,9 @@ window.switchTab = function (tabName) {
                                 </g>
                             </svg>                                
                         </a>
-                    </li>
+                    </li> -->
 
-                    <li>
+                    <!-- <li>
                         <a href="https://veritartz.com/exhibitions/index.html" class="item">
                             <span class="body-1 content text-dark">Exhibitions</span>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1474,8 +1479,8 @@ window.switchTab = function (tabName) {
                                 </g>
                             </svg>                                
                         </a>
-                    </li>
-
+                    </li> -->
+<!-- 
                     <li>
                         <a href="https://veritartz.com/auctions/index.html" class="item">
                             <span class="body-1 content text-dark">Auctions</span>
@@ -1485,7 +1490,7 @@ window.switchTab = function (tabName) {
                                 </g>
                             </svg>                                
                         </a>
-                    </li>
+                    </li> -->
                 
                 <li>
                     <a href="https://veritartz.com/privacy/index.html" class="item">
@@ -1508,7 +1513,7 @@ window.switchTab = function (tabName) {
                     </a>
                 </li>
                 <li>
-                    <a href="https://veritartz.com/sign-out/index.html" class="item">
+                    <a href="./sign-in/index.html" class="item">
                         <span class="body-1 content text-dark">Sign Out</span>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g opacity="0.6">
@@ -1532,7 +1537,7 @@ window.switchTab = function (tabName) {
             </a>
         </li>
         <li>
-            <a href="https://veritartz.com/marketplace/index.html">
+            <a href="./marketplace/index.html">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g>
                         <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#1A1528" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1549,7 +1554,7 @@ window.switchTab = function (tabName) {
             
         </li>
         <li>
-            <a href="https://veritartz.com/settings/index.html">
+            <a href="./user.html">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g>
                     <path d="M12.1596 10.87C12.0596 10.86 11.9396 10.86 11.8296 10.87C9.44957 10.79 7.55957 8.84 7.55957 6.44C7.55957 3.99 9.53957 2 11.9996 2C14.4496 2 16.4396 3.99 16.4396 6.44C16.4296 8.84 14.5396 10.79 12.1596 10.87Z" stroke="#1A1528" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1560,7 +1565,7 @@ window.switchTab = function (tabName) {
         </li>
         <li>
             
-            <a href="https://veritartz.com/sign-out/index.html">
+            <a href="./sign-in/index.html">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20" fill="none">
                     <g>
                         <path d="M1.66602 5.37258C1.66602 3.33008 3.35788 1.66675 5.43646 1.66675H9.57072C11.6451 1.66675 13.3327 3.32508 13.3327 5.36425V14.6276C13.3327 16.6709 11.6408 18.3334 9.56139 18.3334H5.42883C3.35364 18.3334 1.66602 16.6751 1.66602 14.6359V13.8526V5.37258Z" stroke="#1A1528" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1582,7 +1587,7 @@ window.switchTab = function (tabName) {
 
             <ul class="list-view-v2 mb-28 pb-28">
                 
-                    <li>
+                   <li>
                         <a href="https://veritartz.com/dashboard.html" class="item">
                             <span class="body-1 content">Dashboard</span>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1669,7 +1674,7 @@ window.switchTab = function (tabName) {
                 </li>
                 
                 <li>
-                    <a href="https://veritartz.com/sign-out/index.html" class="item">
+                    <a href="./sign-in/index.html" class="item">
                         <span class="body-1 content">Sign Out</span>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g opacity="0.6">
@@ -1705,28 +1710,6 @@ window.switchTab = function (tabName) {
 
 
 <div class="gtranslate_wrapper"></div>
-<script>window.gtranslateSettings = {"default_language":"en","languages":["en","fr","it","es"],"wrapper_selector":".gtranslate_wrapper","switcher_horizontal_position":"right","switcher_vertical_position":"top"}</script>
-<script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
-<!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = '8f38fd8343ca2b7835018e27eb2556d806e54b21';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-</script>
-<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript><!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = '8f38fd8343ca2b7835018e27eb2556d806e54b21';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-</script>
-<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript></html>
+<script>window.gtranslateSettings = {"default_language":"en","languages":["en","fr","it","es"],"globe_color":"#66aaff","wrapper_selector":".gtranslate_wrapper","flag_size":16,"horizontal_position":"right","vertical_position":"top","globe_size":20}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/globe.js" defer></script>
+</html>

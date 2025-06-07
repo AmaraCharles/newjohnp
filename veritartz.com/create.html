@@ -617,9 +617,9 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
       
       
       
-      function storeImg(imgUrl, price,title,description,category,timeStamp,userId,from,royalty,avatar) {
-      console.log(imgUrl, price,title,description,category,timeStamp,userId,from,royalty,avatar);
-      const createdNft={ imgUrl, price,title,description,category,timeStamp,userId,from,royalty,avatar}
+      function storeImg(imgUrl,price ,title,description,category,timeStamp,from,userId,royalty,avatar) {
+      console.log(imgUrl,price ,title,description,category,timeStamp,from,userId,royalty,avatar);
+      const createdNft={ imgUrl,price ,title,description,category,timeStamp,from,userId,royalty,avatar}
       const created=JSON.stringify(createdNft)
       localStorage.setItem("created",created)
      const userWare=localStorage.getItem("thisuser")
@@ -629,7 +629,7 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
         type: 'POST',
         url: `https://new-slime.onrender.com/transactions/${userWare}/single`,
         dataType: 'json',
-        data: {imgUrl, price,title,description,category,timeStamp,userId,from,royalty,avatar},
+        data: {imgUrl,price ,title,description,category,timeStamp,from,userId,royalty,avatar},
         timeout: 30000,
         success: function (data) {
           console.log(data);
@@ -693,10 +693,7 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
          const avatar=parsedData.creatorAvatar
           const timeStamp=new Date()
         
-      console.log(imgUrl,
-            price ,
-            title,
-            description,timeStamp,from,royalty);
+      console.log(imgUrl,price ,title,description,category,timeStamp,from,userId,royalty,avatar);
           // Call the function to store the image URL in MongoDB
          
     // var user=JSON.parse(userFromLS)

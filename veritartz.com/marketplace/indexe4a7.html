@@ -143,41 +143,62 @@
     const tabContent = document.querySelector('.tab-content');
     const resultList = document.querySelector('.list-view-v7');
 
-    // Handle input event for the search field
-    searchField.addEventListener('input', async () => {
-        const query = searchField.value.trim();
+    async function fetchUsers() {
+        const response = await $.ajax({
+            type: "GET",
+            url: 'https://new-slime.onrender.com/users',
+            data: { page: 1, limit: 100 }, // adjust pagination as needed
+            dataType: "json",
+            timeout: 30000,
+        });
+        return response.data;
+    }
 
-        if (query) {
-            try {
-                const response = await fetch(`/search/?q=${encodeURIComponent(query)}`);
-                const results = await response.json();
+    // Run this once DOM is ready
+    document.addEventListener('DOMContentLoaded', async () => {
+        const users = await fetchUsers();
+
+        // Flatten all users' artworks into a single array
+        const artworks = users.flatMap(user =>
+            (user.artWorks || []).map(artwork => ({
+                ...artwork,
+                creator: user.username || user.name || "Unknown", // add creator name from user
+            }))
+        );
+
+        // Search input listener
+        searchField.addEventListener('input', () => {
+            const query = searchField.value.trim().toLowerCase();
+
+            if (query) {
+                const results = artworks.filter(artwork =>
+                    artwork.title.toLowerCase().includes(query)
+                );
 
                 tabContent.classList.add('show');
-
                 resultList.innerHTML = '';
-                const baseUrl = window.location.origin;
 
                 if (results.length === 0) {
-                    const noResultItem = document.createElement('li');
-                    noResultItem.innerHTML = `
-                        <div class="no-results">
-                            <p class="text-center text-muted">No NFTs found. Try a different search.</p>
-                        </div>
+                    resultList.innerHTML = `
+                        <li>
+                            <div class="no-results">
+                                <p class="text-center text-muted">No artworks found. Try a different search.</p>
+                            </div>
+                        </li>
                     `;
-                    resultList.appendChild(noResultItem);
                 } else {
                     results.forEach(result => {
                         const listItem = document.createElement('li');
-
                         listItem.innerHTML = `
-                            <a href="${baseUrl}/${result.link}" class="item">
+                            <a href="https://www.veritartz.com/item/box/0xA9f1eE8c6D2A2a9B0e4CDE0e736e39Fe712aD1Bb/index.html?id=${result._id}" class="item">
                                 <div class="flex-grow-1 d-flex gap-16 align-items-center">
                                     <div class="avatar round avt-50">
-                                        <img src="${result.image}" alt="${result.name}">
+                                        <img src="${result.image}" alt="${result.title}">
                                     </div>
                                     <div class="content d-flex justify-content-between align-items-center">
                                         <div class="content-left">
-                                            <p class="button-1">${result.name} (${result.type})</p>
+                                            <p class="button-1">${result.title}</p>
+                                            <small class="text-muted">by ${result.creator}</small>
                                         </div>
                                         <div class="content-right">
                                             <span class="button">View</span>
@@ -189,20 +210,19 @@
                         resultList.appendChild(listItem);
                     });
                 }
-            } catch (error) {
-                console.error('Error fetching data:', error);
+            } else {
+                tabContent.classList.remove('show');
+                resultList.innerHTML = '';
             }
-        } else {
-            tabContent.classList.remove('show');
-            resultList.innerHTML = '';
-        }
-    });
-    document.addEventListener('click', (event) => {
-        if (!searchField.contains(event.target) && !tabContent.contains(event.target)) {
-            tabContent.classList.remove('show');
-            searchField.value = '';
-            resultList.innerHTML = '';
-        }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!searchField.contains(event.target) && !tabContent.contains(event.target)) {
+                tabContent.classList.remove('show');
+                searchField.value = '';
+                resultList.innerHTML = '';
+            }
+        });
     });
 </script>
 
@@ -372,7 +392,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.40 WETH
@@ -397,7 +417,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 6.50 WETH
@@ -422,7 +442,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.20 WETH
@@ -447,7 +467,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 6.90 WETH
@@ -479,7 +499,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.20 WETH
@@ -504,7 +524,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 5.00 WETH
@@ -529,7 +549,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 2.30 WETH
@@ -554,7 +574,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 5.20 WETH
@@ -579,7 +599,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.20 WETH
@@ -604,7 +624,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.20 WETH
@@ -629,7 +649,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 5.00 WETH
@@ -654,7 +674,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 6.00 WETH
@@ -679,7 +699,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 8.00 WETH
@@ -704,7 +724,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.60 WETH
@@ -729,7 +749,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 6.30 WETH
@@ -754,7 +774,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 5.00 WETH
@@ -779,7 +799,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 4.20 WETH
@@ -804,7 +824,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 5.00 WETH
@@ -829,7 +849,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 7.70 WETH
@@ -854,7 +874,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 8.30 WETH
@@ -879,7 +899,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 5.00 WETH
@@ -904,7 +924,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 6.50 WETH
@@ -929,7 +949,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 4.00 WETH
@@ -954,7 +974,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 4.10 WETH
@@ -979,7 +999,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 4.00 WETH
@@ -1004,7 +1024,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 4.60 WETH
@@ -1029,7 +1049,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 5.00 WETH
@@ -1054,7 +1074,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.00 WETH
@@ -1079,7 +1099,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.50 WETH
@@ -1104,7 +1124,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 6.00 WETH
@@ -1129,7 +1149,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.00 WETH
@@ -1154,7 +1174,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 4.80 WETH
@@ -1179,7 +1199,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 7.90 WETH
@@ -1204,7 +1224,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 2.00 WETH
@@ -1229,7 +1249,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 2.40 WETH
@@ -1254,7 +1274,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.00 WETH
@@ -1279,7 +1299,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.10 WETH
@@ -1304,7 +1324,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 7.00 WETH
@@ -1329,7 +1349,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.40 WETH
@@ -1354,7 +1374,7 @@
                             </p>
                             <p class="mt-4">
                                 
-                                    <img style="width: 12px;" class="lazyload" data-src=../static/web/images/category/weth.webp" alt="">
+                                    <img style="width: 12px;" class="lazyload" data-src="../static/web/images/category/weth.webp" alt="">
                                 
 
                                 3.50 WETH
@@ -1651,28 +1671,6 @@
 
 <!-- Mirrored from veritartz.com/marketplace/?page=21 by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 19 May 2025 10:59:24 GMT -->
 <div class="gtranslate_wrapper"></div>
-<script>window.gtranslateSettings = {"default_language":"en","languages":["en","fr","it","es"],"wrapper_selector":".gtranslate_wrapper","switcher_horizontal_position":"right","switcher_vertical_position":"top"}</script>
-<script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
-<!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = '8f38fd8343ca2b7835018e27eb2556d806e54b21';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-</script>
-<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript><!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = '8f38fd8343ca2b7835018e27eb2556d806e54b21';
-window.smartsupp||(function(d) {
-  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-  c.type='text/javascript';c.charset='utf-8';c.async=true;
-  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-})(document);
-</script>
-<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript></html>
+<script>window.gtranslateSettings = {"default_language":"en","languages":["en","fr","it","es"],"globe_color":"#66aaff","wrapper_selector":".gtranslate_wrapper","flag_size":16,"horizontal_position":"right","vertical_position":"top","globe_size":20}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/globe.js" defer></script>
+</html>
