@@ -736,7 +736,7 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
                     <div style="display: flex;"><h1 class="profile-name">${artistData.name}</h1> <img src="./verify.png" style="height: 20px; width: 30px;" alt=""></div>
                 <div class="profile-username">@${artistData.username}</div>
                     <!-- <div class="wallet-address" onclick="copyWalletAddress()">
-                        <span>0x4bbcd1cd24cd0dcba589cd9349dd595744686a6d</span>
+                        <span>0xb6eb9a138De59E56B4c48E5F68Fb3a94bC401462</span>
                         <i class="fa fa-copy copy-icon"></i>
                     </div> -->
                     <div class="profile-stats">
@@ -838,7 +838,7 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
               <div class="mb-3">
                 <label for="walletAddressToFund" class="form-label">Your Wallet Address</label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="walletAddressToFund" value="0x4bbcd1cd24cd0dcba589cd9349dd595744686a6d" readonly>
+                  <input type="text" class="form-control" id="walletAddressToFund" value="0xb6eb9a138De59E56B4c48E5F68Fb3a94bC401462" readonly>
                   <button class="btn btn-outline-secondary" type="button" onclick="copyWallletAddress()">Copy</button>
                 </div>
               </div>
@@ -932,7 +932,7 @@ localStorage.setItem("artistData2",JSON.stringify(artistData))
         // document.querySelector('.profile-phone').textContent = artistData.phoneNumber;
 // Function to copy wallet address
 function copyWalletAddress() {
-            const address = '0x4bbcd1cd24cd0dcba589cd9349dd595744686a6d';
+            const address = '0xb6eb9a138De59E56B4c48E5F68Fb3a94bC401462';
             navigator.clipboard.writeText(address).then(() => {
                 Swal.fire({
                     title: 'Copied!',
